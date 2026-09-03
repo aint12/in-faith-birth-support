@@ -1,82 +1,46 @@
 # In Faith Birth Support
 
-A warm, faith-centered website for a birth-support / doula practice offering
-emotional and physical support to mothers **before, during, and after** birth.
+A multi-page site for a doula practice — labor and birth support, prenatal care, and postpartum care — with a consultation request flow that captures inquiries without depending on a third-party form service.
 
-- Multi-page site: **Home · About · Services · Book a Consultation**
-- Services featured: **Labor & birth doula**, **Prenatal support**, **Postpartum care**
-- A **booking / consultation request** flow that saves submissions locally
-- Calming palette (sage · cream · dusty rose), elegant serif headings, soft homely shapes
-- Fully responsive, accessible, with gentle scroll animations
-- **Zero dependencies** — just Node.js. Nothing to `npm install`.
+Built to run on a single small server with nothing to install.
 
-## Run it
+## Design decisions
+
+**Zero dependencies.** `package.json` has no `dependencies` block. The server is Node's built-in `http` and `fs` modules — static file serving, MIME type resolution, and one POST endpoint. Nothing to `npm install`, no supply chain, no version drift on a site that will sit untouched for months at a time.
+
+**Form submissions stay local.** `POST /api/consultation` appends each request to `data/consultations.json` and logs it. No Formspree, no Mailchimp, no third party holding client inquiries — which matters more than usual when the submissions are expectant mothers sharing due dates and health context. The handler is isolated so swapping in an email service is a single-function change.
+
+**Design system in CSS custom properties.** The palette (sage, cream, dusty rose), type scale, and spacing live as variables at the top of `styles.css`. Restyling is one block, not a search across files.
+
+**Progressive enhancement.** Scroll animations and nav behavior are additive — the site is fully readable and the form fully submittable with JavaScript disabled.
+
+## Running it
 
 ```bash
-cd "in-faith-birth-support"
 npm start          # or: node server.js
 ```
 
-Then open **http://localhost:4040**
+Serves on port 4040. Override with `PORT=5000 node server.js`.
 
-Change the port with an env var if you like: `PORT=5000 node server.js`
-
-## How the booking form works
-
-The "Book a free consultation" form posts to `POST /api/consultation`. Each
-request is appended to `data/consultations.json` (created automatically on the
-first submission) and logged to the server console. There's no email account or
-third-party service wired in, so nothing leaves your machine.
-
-To receive submissions by email instead, replace the `saveConsultation` step in
-[`server.js`](server.js) with a call to an email service (e.g. Nodemailer, Resend,
-or a form provider like Formspree).
-
-## Make it yours
-
-Search-and-replace these placeholders with the real details:
-
-| Placeholder | Where | Replace with |
-| --- | --- | --- |
-| `[Your Name]` | `public/about.html` | The doula's / founder's name |
-| `hello@infaithbirthsupport.com` | all pages (footer + contact) | Real email |
-| `(000) 000-0000` / `tel:+10000000000` | all pages | Real phone |
-| `[Your City]` | all pages | Your service area |
-| Social links (`href="#"`) | footers | Instagram / Facebook URLs |
-| Prices in `public/services.html` | Services page | Your real pricing |
-| Testimonials in `public/index.html` | Home page | Real client quotes (with permission) |
-
-### Add real photos
-
-The site currently uses tasteful illustrated placeholders (`.photo-ph`). To drop
-in real photography, replace the `<div class="photo-ph">…</div>` blocks with an
-`<img>` — for example:
-
-```html
-<img src="/images/hero-mother.jpg" alt="A mother holding her newborn" />
-```
-
-Put image files in `public/images/`. The hero and service frames are already
-shaped and styled to crop photos nicely.
-
-## Project structure
+## Structure
 
 ```
-in-faith-birth-support/
-├── server.js              # tiny zero-dep static server + /api/consultation
-├── package.json
-├── README.md
-├── data/                  # consultations.json is written here at runtime
-└── public/
-    ├── index.html         # Home
-    ├── about.html         # About / the doula's story
-    ├── services.html      # Services, packages & FAQ
-    ├── contact.html       # Booking / consultation request
-    ├── 404.html
-    ├── css/styles.css     # full design system
-    └── js/main.js         # nav, scroll reveal, form handling
+server.js              # static server + POST /api/consultation
+data/                  # consultations.json, created on first submission
+public/
+├── index.html         # home
+├── about.html
+├── services.html      # services, packages, FAQ
+├── contact.html       # consultation request
+├── 404.html
+├── css/styles.css     # design system + all page styles
+└── js/main.js         # nav, scroll reveal, form handling
 ```
 
----
+## Scope and limits
 
-Made with love & prayer. 🤍
+- **Flat-file storage.** Appending JSON on each submission doesn't handle concurrent writes. Correct for the actual load; wrong past it.
+- **No email notification.** Submissions land in a file and the server log — someone has to check. An email or SMS hook is the obvious next piece.
+- **No admin view.** Reading submissions means reading the JSON.
+- **Illustrated placeholders instead of photography.** The image frames are shaped and styled for real photos; the placeholders are stand-ins.
+- **No tests.**
