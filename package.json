@@ -1,0 +1,14 @@
+{
+  "name": "in-faith-birth-support",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Faith-centered birth support website — labor & birth doula, prenatal, and postpartum care, with a consultation booking flow.",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

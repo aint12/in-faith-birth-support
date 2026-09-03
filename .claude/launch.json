@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "in-faith-birth-support",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
+      "port": 4040
+    }
+  ]
+}
